@@ -67,4 +67,12 @@ public class MtMStudent {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
+    }
+
+    public void deleteCourse(Course course) {
+        this.courses.remove(course);
+    }
 }

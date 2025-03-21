@@ -1,8 +1,10 @@
 package com.crud.jpa_relations_17_03.controller.many_to_many;
 
+import com.crud.jpa_relations_17_03.entity.many_to_many.Course;
 import com.crud.jpa_relations_17_03.entity.many_to_many.MtMStudent;
 import com.crud.jpa_relations_17_03.service.many_to_many.MtMStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,17 @@ public class MtMStudentController {
         }
 
         return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("/select-by-course-id/{course_id}")
+    public ResponseEntity<Page<MtMStudent>> selectStudentsByCourseId(
+            @PathVariable Long course_id,
+            @RequestParam Integer pageNumber,
+            @RequestParam Integer pageSize) {
+
+        Page<MtMStudent> studentPage = studentService.findStudentByCourseId(course_id, pageNumber, pageSize);
+        return ResponseEntity.ok(studentPage);
 
     }
 
@@ -69,5 +82,33 @@ public class MtMStudentController {
 
         return ResponseEntity.notFound().build();
 
+    }
+
+    @PutMapping("/subscribe-to-course/{studentId}/{courseId}")
+    public ResponseEntity<MtMStudent> subscribeStudentToExistingCourse(
+            @PathVariable Long studentId,
+            @PathVariable Long courseId) {
+
+        Optional<MtMStudent> optionalStudent = studentService.addCourseToStudent(studentId, courseId);
+
+        if (optionalStudent.isPresent()) {
+            return ResponseEntity.ok(optionalStudent.get());
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/remove-course/{studentId}/{courseId}")
+    public ResponseEntity<MtMStudent> removeCourseFromStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long courseId) {
+
+        Optional<MtMStudent> optionalStudent = studentService.removeCourseFromStudent(studentId, courseId);
+
+        if (optionalStudent.isPresent()) {
+            return ResponseEntity.ok(optionalStudent.get());
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
